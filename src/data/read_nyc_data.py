@@ -1,14 +1,11 @@
+# This script was used to read, clean and save the NYC Taxi data with all the fields available
+# The result is a .feather file
+
 # %%
 import pandas as pd
 import os
 
-def clean_nyc_data(ny):
-    ny = ny[ny['total_amount'] >= 0]
-    ny = ny[ny['pickup_longitude'] != 0]
-    ny = ny[ny['dropoff_longitude'] != 0]
-    ny = ny[ny['trip_distance'] != 0]
-
-def read_nyc_data(path, dtype, usecols=None):
+def read_nyc_data(path, dtype, usecols=None, clean=True):
     files = os.listdir(path)
     columns = pd.read_csv(os.path.join(path, 'yellow_tripdata_2015-01_00'), nrows=1).columns
     usecols = usecols if usecols else columns
@@ -16,9 +13,19 @@ def read_nyc_data(path, dtype, usecols=None):
 
     for f in files:    
         if f.endswith('00'):
-            df_list.append(pd.read_csv(os.path.join(path, f), usecols=usecols, dtype=dtype))
+            ny_part = pd.read_csv(os.path.join(path, f),
+                usecols=usecols, dtype=dtype)
         else:
-            df_list.append(pd.read_csv(os.path.join(path, f), usecols=usecols, dtype=dtype, names=columns))
+            ny_part = pd.read_csv(os.path.join(path, f),
+                usecols=usecols, dtype=dtype, names=columns)
+
+        if clean:
+            ny_part = ny_part[ny_part['total_amount'] >= 0]
+            ny_part = ny_part[ny_part['pickup_longitude'] != 0]
+            ny_part = ny_part[ny_part['dropoff_longitude'] != 0]
+            ny_part = ny_part[ny_part['trip_distance'] != 0]
+
+        df_list.append(ny_part)
 
     ny = pd.concat(df_list, ignore_index=True)
     return ny
@@ -44,17 +51,12 @@ dtype = {
     'total_amount': 'float32'
 }
 
-path = r'..\data\raw\taxi data'
+path = r'..\..\data\raw\taxi data'
 
 # %%
 %%time
 ny = read_nyc_data(path, dtype)
 
 # %%
-ny = clean_nyc_data(ny)
-
-# %%
 %%time
-ny.to_feather('../data/raw/nyc_taxi_data.feather')
-
-# %%
+ny.to_feather('../data/clean/nyc_taxi_data_clean.feather')
