@@ -1,5 +1,8 @@
-# This script was used to summarize the NYC Taxi data by block.
-# Average daily pickups by block were calculated.
+'''
+This script was used to summarize the NYC Taxi data by block.
+Average daily pickups by block were calculated.
+'''
+
 # %%
 import pandas as pd
 import os
@@ -72,4 +75,4 @@ geo_path =r'..\..\data\raw\nyc_cbg_geoms.geojson'
 ny = nyc_data_by_block(ny_path, geo_path)
 
 # %%
-ny.reset_index().to_feather('../data/clean/nyc_taxi_data_by_block.feather')
+ny.reset_index().to_feather('../data/interim/nyc_taxi_data_by_block.feather')

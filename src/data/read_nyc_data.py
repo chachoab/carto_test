@@ -1,5 +1,7 @@
-# This script was used to read, clean and save the NYC Taxi data with all the fields available
-# The result is a .feather file
+'''
+This script was used to read, clean and save the NYC Taxi data with all the fields available
+The result is a .feather file
+'''
 
 # %%
 import pandas as pd
