@@ -132,3 +132,4 @@ dmypy.json
 /data
 
 settings.json
+config.py
