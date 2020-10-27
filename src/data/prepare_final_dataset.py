@@ -25,4 +25,4 @@ df = acs.merge(ny, how='left', on='geoid')
 df = df[df['avg'].notnull()]
 df.fillna(df.mean())
 
-df.to_csv(r'..\..\data\final\final.csv')
+df.to_feather(r'..\..\data\final\final.feather')

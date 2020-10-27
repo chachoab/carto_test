@@ -13,6 +13,9 @@ acs = pd.read_csv(r'..\..\data\raw\nyc_acs_demographics.csv')
 # Pivot table
 acs = acs.pivot(index='geoid', columns='acs_demog_var', values='value')
 
+# Replace median year = for Na where > 1900 (it will be filled later)
+acs.loc[acs['median_year_structure_built'] < 1900, 'median_year_structure_built'] = np.nan
+
 # Join with geojson
 geo = geopandas.read_file(r'..\..\data\raw\nyc_cbg_geoms.geojson')
 geo['geoid'] = geo['geoid'].astype(np.int64)
@@ -27,5 +30,8 @@ for index, block in acs.iterrows():
         neighbors = acs[~acs['geometry'].disjoint(block['geometry'])].index.to_list()
         for col in null_cols:
             acs.at[index, col] = acs.loc[neighbors, col].mean()
+
+#Fill remaining NA values
+acs = acs.fillna(acs.mean())
 
 acs.to_feather(r'..\..\data\interim\acs.feather')
